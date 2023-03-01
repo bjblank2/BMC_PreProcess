@@ -1,7 +1,4 @@
 _author__ = 'brian'
-# This file handles taking the input from vasp and calculating the fit.
-# The functions that are important for the actual calculating the fit
-# have comments
 
 import numpy as np
 import copy
@@ -12,7 +9,7 @@ import matplotlib.pyplot as plt
 #from sklearn.linear_model import Ridge
 #from sklearn import linear_model
 
-def generate_m_structure(data_file, aust_tol, spin_style, spin_tol):
+def generate_m_structure(data_file, phase_tol, spin_style, spin_tol):
     m_struct_list = []
     data = open(data_file, 'r')
     lines = data.readlines()
@@ -22,7 +19,7 @@ def generate_m_structure(data_file, aust_tol, spin_style, spin_tol):
             species = (lines[i].split())
             species.pop(0)
             print(lines[i+1])
-            m_struct = m_structure.MStructureObj(lines[i+1], species, aust_tol)
+            m_struct = m_structure.MStructureObj(lines[i+1], species, phase_tol)
             for j in range(m_struct.num_Atoms):
                 atom_data = lines[i + j + 2]
                 m_struct.set_atom_properties(j, atom_data, spin_style, spin_tol)
@@ -169,26 +166,3 @@ def check_zero_spin(basis):
         if (basis[i].spin != 0):
             zeros = 'False'
     return zeros
-
-def set_KJ_ratio(m_structure_list,monomer_rule_list, cluster_rule_list, j_rule_list, KoJ):
-    m_structure_KoJ = copy.deepcopy(m_structure_list[len(m_structure_list)-1])
-    m_structure_KoJ.name = 'KoJ'
-    m_structure_KoJ.enrg = 0.0
-    m_structure_KoJ.original_enrg = 0.0
-    for i in range(len(m_structure_KoJ.Monomer_sums)):
-        m_structure_KoJ.Monomer_sums[i] = 0
-    for i in range(len(m_structure_KoJ.Cluster_sums)):
-        m_structure_KoJ.Cluster_sums[i]=0
-    for i in range(len(m_structure_KoJ.J_sums)):
-        m_structure_KoJ.J_sums[i] = 0
-    for i in range(len(cluster_rule_list)):
-        if cluster_rule_list[i].phase == 'mart':
-            m_structure_KoJ.Cluster_sums[i] = -KoJ
-        elif cluster_rule_list[i].phase == 'aust':
-            m_structure_KoJ.Cluster_sums[i] = 1
-    for i in range(len(j_rule_list)):
-        if j_rule_list[i].phase == 'mart':
-            m_structure_KoJ.J_sums[i] = -KoJ
-        elif j_rule_list[i].phase == 'aust':
-            m_structure_KoJ.J_sums[i] = 1
-    m_structure_list.append(m_structure_KoJ)

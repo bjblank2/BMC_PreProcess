@@ -2,7 +2,7 @@ __author__ = 'brian'
 import atom
 import numpy as np
 
-def determine_phaseu(LCs,aust_tol):
+def determine_phaseu(LCs,phase_tol):
     a = LCs[0];
     b = LCs[1];
     c = LCs[2];
@@ -23,11 +23,11 @@ def determine_phaseu(LCs,aust_tol):
         A = c
         B = b
         u = a / ((c+b)/2)
-    if u > (1+aust_tol):
+    if u > (1+phase_tol):
         phase = "mart"
-    if u <= (1+aust_tol) and u >= (1-aust_tol):
+    if u <= (1+phase_tol) and u >= (1-phase_tol):
         phase = "aust"
-    if u < (1-aust_tol):
+    if u < (1-phase_tol):
         phase = "prem"
     return(phase,u)
 

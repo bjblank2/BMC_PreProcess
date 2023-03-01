@@ -8,7 +8,7 @@ from numpy.linalg import norm
 import os
 
 
-def import_vasp1(root_dir, output_dir,species):
+def import_vasp1(root_dir, output_dir, species, use_spin_tol, spin_tol):
     output = open(output_dir, 'w')
     enrg_list = []
     for subdir, dirs, files in os.walk(root_dir):
@@ -97,6 +97,12 @@ def import_vasp1(root_dir, output_dir,species):
                 #print(name)
                 #print(mag_list)
                 mag_list_ordered = sorted(mag_list, key=lambda d: species.index(d[1]))
+                if use_spin_tol == True:
+                    for mag in mag_list_ordered:
+                        mag[0] = float(mag[0])
+                        if spin_tol[species.index(mag[1])] == 0: mag[0] = 0
+                        elif np.abs(mag[0]) < spin_tol[species.index(mag[1])]: mag[0] = 0
+                        else: mag[0] = 1*np.sign(mag[0])
                 enrg = str(enrg)
                 a = str(a)
                 b = str(b)
