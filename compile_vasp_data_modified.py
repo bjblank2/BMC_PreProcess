@@ -122,14 +122,8 @@ def import_vasp1(root_dir, output_dir, species, use_spin_tol, spin_tol):
                 pos_list = []
                 for i in range(8, 8 + total_num):
                     pos = contcar_lines[i].split()
-                    if i-8 < int(composition[0][0]):
-                        kind = species[0]
-                    elif i-8 < int(composition[0][0]) + int(composition[1][0]):
-                        kind = species[1]
-                    else:
-                        kind = species[2]
-                    pos_list.append([pos,kind])
-
+                    j = i - 8
+                    pos_list.append([pos,seq[j]])
                 # resort pos according to the order of species
                 pos_list_ordered = sorted(pos_list, key=lambda d: species.index(d[1]))
                 for i in range(total_num):
